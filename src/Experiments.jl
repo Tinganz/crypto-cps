@@ -5,7 +5,7 @@ using ControlSystemsBase
 
 export deviation
 
-function deviation(sysd::StateSpace{<:Discrete}, z_0::AbstractVector{:<Real}, K::AbstractMatrix{:<Real}; H::Integer=100)
+function deviation(sysd::StateSpace{<:Discrete}, z_0::AbstractVector{<:Real}, K::AbstractMatrix{<:Real}; H::Integer=100)
     # TODO:
     #  1. calculate the norminal trajectory
     #  2. allow 1-bit modification
@@ -22,6 +22,7 @@ function deviation(sysd::StateSpace{<:Discrete}, z_0::AbstractVector{:<Real}, K:
     # 1-bit modification
     # find how to flip last bit in floating point value u
     z[i] = A * z[1:p, i-1] + B * bit_flipped_u
+    end
 end
 
 end
