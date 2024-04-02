@@ -36,7 +36,7 @@ function find_nominal(z_0::AbstractVector{<:Real}, Φ::AbstractVector{<:Real}; H
     return z
 end
 
-function bounded_runs(z_0::AbstractVector{<:Real}, Φ::AbstractVector{<:Real}, nominal::Array{<:AbstractVector{<:Real}, 2}, step_size::Integer)
+function bounded_runs(z_0::AbstractVector{<:Real}, Φ::AbstractVector{<:Real}, step_size::Integer)
     if step_size == 0
         z = zeros(p + r, step_size+1)
         z[:,1] = z_0
@@ -47,10 +47,17 @@ function bounded_runs(z_0::AbstractVector{<:Real}, Φ::AbstractVector{<:Real}, n
             flipped = element
             element[:, step_size] = Φ * element[:, step_size-1]
             flipped[:, step_size] = Φ * flip_bit()
-        push!(prev_values, flipped)
+            push!(prev_values, flipped)
         return prev_values
     end
 end
+end
+
+function bounded_run_box(z_0::AbstractVector{<:Real}, Φ::AbstractVector{<:Real}, nominal::Array{<:AbstractVector{<:Real}, 2}, step_size::Integer)
+    trajectories = bounded_runs(z_0, Φ,  step_size)
+    for trajectory in trajectories:
+        
+    end
 end
 
 end
