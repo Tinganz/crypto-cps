@@ -4,7 +4,6 @@ module Experiments
 using ControlSystemsBase
 
 export deviation
-export flip_bit
 
 function flip_bit(input::Float32, n::Int)
     bits = reinterpret(UTint32, u)
@@ -22,26 +21,38 @@ function deviation(sysd::StateSpace{<:Discrete}, z_0::AbstractVector{<:Real}, K:
     # lsim(sysd)
     A, B, C, D = ssdata(sysd)
     p, r = size(B) #Dimensions of B - p = # of state variables, r = # of control inputs
-    z = zeros(p + r, H) #Store both state and input in z, H = timesteps
-    z[:,1] = z_0
+    z_nominal = find_nominal(z_0, A)
 
-    #Allocate modified K matrix
-    K_bit = similar(K, Float32)
-    #for i in 2:H+1
-    for i in 2:H
-        #numel(K) = m*n (total number of elements in K)
-        for j = 1:numel(K)
-            #Convert K to Float32 & modify each element
-            K_bit[j] = flip_bit(Float32(K[j]), n)
-        end
-        z[:,i] = A * z[1:p, i-1] + B * K_bit
     end
-
-    # 1-bit modification
-    # find how to flip last bit in floating point value u
-        # Input is a floating point, and a integer, change it to the single-precision format, then change the last bit. 
     
+end
+
+function find_nominal(z_0::AbstractVector{<:Real}, Φ::AbstractVector{<:Real}; H::Integer=100)
+    z = zeros(p + r, H+1)
+    z[:,1] = z_0
+    for i in 2:H+1
+        z[:,i] = Φ * z[:,i-1]
     end
+    return z
+end
+
+function bounded_runs(z_0::AbstractVector{<:Real}, Φ::AbstractVector{<:Real}, nominal::Array{<:AbstractVector{<:Real}, 2}, step_size::Integer)
+    if step_size == 0
+        z = zeros(p + r, step_size+1)
+        z[:,1] = z_0
+        return [z]
+    else
+        prev_values = generate_values(stepsize - 1, z_0, a, b)
+        for element in prev_values:
+            flipped = element
+            element[:, step_size] = Φ * element[:, step_size-1]
+            flipped[:, step_size] = Φ * flip_bit()
+        push!(prev_values, flipped)
+        return prev_values
+    end
+end
+end
+
 end
 
 
