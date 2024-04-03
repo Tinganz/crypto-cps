@@ -11,6 +11,12 @@ function flip_bit(input::Float32, n::Int)
     reinterpret(Float32, flipped)
 end
 
+function flip_z(z::AbstractVector{<:Real}; n::Interger=1)
+    last_element = z[end]
+    flipped_element = flip_bit(last_element,n)
+    z[end] = flipped_element
+    return z
+end
 
 function deviation(sysd::StateSpace{<:Discrete}, z_0::AbstractVector{<:Real}, K::AbstractMatrix{<:Real}; step_size::Integer=10, H::Integer=100)
     # TODO:
@@ -46,7 +52,7 @@ function bounded_runs(z_0::AbstractVector{<:Real}, Φ::AbstractVector{<:Real}, s
         for element in prev_values:
             flipped = element
             element[:, step_size] = Φ * element[:, step_size-1]
-            flipped[:, step_size] = Φ * flip_bit()
+            flipped[:, step_size] = Φ * flipz(element[:, step_size-1])
             push!(prev_values, flipped)
         return prev_values
     end
