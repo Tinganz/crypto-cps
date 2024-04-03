@@ -12,7 +12,7 @@ function flip_bit(input::Float32, n::Int)
 end
 
 
-function deviation(sysd::StateSpace{<:Discrete}, z_0::AbstractVector{<:Real}, K::AbstractMatrix{<:Real}; H::Integer=100)
+function deviation(sysd::StateSpace{<:Discrete}, z_0::AbstractVector{<:Real}, K::AbstractMatrix{<:Real}; step_size::Integer=10, H::Integer=100)
     # TODO:
     #  1. calculate the norminal trajectory
     #  2. allow 1-bit modification
@@ -22,8 +22,8 @@ function deviation(sysd::StateSpace{<:Discrete}, z_0::AbstractVector{<:Real}, K:
     A, B, C, D = ssdata(sysd)
     p, r = size(B) #Dimensions of B - p = # of state variables, r = # of control inputs
     z_nominal = find_nominal(z_0, A)
-
-    end
+    
+    
     
 end
 
@@ -42,7 +42,7 @@ function bounded_runs(z_0::AbstractVector{<:Real}, Φ::AbstractVector{<:Real}, s
         z[:,1] = z_0
         return [z]
     else
-        prev_values = generate_values(stepsize - 1, z_0, a, b)
+        prev_values = bounded_runs(stepsize - 1, z_0, a, b)
         for element in prev_values:
             flipped = element
             element[:, step_size] = Φ * element[:, step_size-1]
