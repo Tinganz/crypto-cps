@@ -79,6 +79,11 @@ function bounded_run_box(z_0::AbstractVector{<:Real}, Φ::AbstractMatrix{<:Real}
     return[min_trajectory, max_trajectory]
 end
 
+function bounded_run_iter(z_0::AbstractVector{<:Real}, Φ::AbstractMatrix{<:Real}, nominal::Array{<:AbstractVector{<:Real}, 2}, step_size::Integer, total_step::Integer)
+    
+
+end
+
 function find_deviation(trajectory::Array{<:AbstractVector{<:Real}, 2}, nominal::Array{<:AbstractVector{<:Real}, 2})
 
 end
