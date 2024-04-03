@@ -11,9 +11,9 @@ function flip_bit(input::Float32, n::Integer)
     reinterpret(Float32, flipped)
 end
 
-function flip_z(z::AbstractVector{<:Real}; n::Interger=1)
+function flip_z(z::AbstractVector{<:Real}; n::Integer=1)
     last_element = z[end]
-    flipped_element = flip_bit(last_element,n)
+    flipped_element = flip_bit(Float32(last_element),n)
     z[end] = flipped_element
     return z
 end
