@@ -27,7 +27,7 @@ function deviation(sysd::StateSpace{<:Discrete}, z_0::AbstractVector{<:Real}, K:
     
 end
 
-function find_nominal(z_0::AbstractVector{<:Real}, Φ::AbstractVector{<:Real}; H::Integer=100)
+function find_nominal(z_0::AbstractVector{<:Real}, Φ::AbstractMatrix{<:Real}; H::Integer=100)
     z = zeros(p + r, H+1)
     z[:,1] = z_0
     for i in 2:H+1
@@ -36,7 +36,7 @@ function find_nominal(z_0::AbstractVector{<:Real}, Φ::AbstractVector{<:Real}; H
     return z
 end
 
-function bounded_runs(z_0::AbstractVector{<:Real}, Φ::AbstractVector{<:Real}, step_size::Integer)
+function bounded_runs(z_0::AbstractVector{<:Real}, Φ::AbstractMatrix{<:Real}, step_size::Integer)
     if step_size == 0
         z = zeros(p + r, step_size+1)
         z[:,1] = z_0
@@ -53,7 +53,7 @@ function bounded_runs(z_0::AbstractVector{<:Real}, Φ::AbstractVector{<:Real}, s
 end
 end
 
-function bounded_run_box(z_0::AbstractVector{<:Real}, Φ::AbstractVector{<:Real}, nominal::Array{<:AbstractVector{<:Real}, 2}, step_size::Integer)
+function bounded_run_box(z_0::AbstractVector{<:Real}, Φ::AbstractMatrix{<:Real}, nominal::Array{<:AbstractVector{<:Real}, 2}, step_size::Integer)
     trajectories = bounded_runs(z_0, Φ,  step_size)
     max_deviation = -Inf
     min_deviation = Inf
