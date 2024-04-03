@@ -59,8 +59,8 @@ function bounded_runs(z_0::AbstractVector{<:Real}, Φ::AbstractMatrix{<:Real}, z
 end
 end
 
-function bounded_run_box(z_0::AbstractVector{<:Real}, Φ::AbstractMatrix{<:Real}, nominal::Array{<:AbstractVector{<:Real}, 2}, step_size::Integer)
-    trajectories = bounded_runs(z_0, Φ,  step_size)
+function bounded_run_box(z_0::AbstractVector{<:Real}, Φ::AbstractMatrix{<:Real}, nominal::Array{<:AbstractVector{<:Real}, 2}, z_dimention::Integer, step_size::Integer)
+    trajectories = bounded_runs(z_0, Φ, z_dimention, step_size)
     max_deviation = -Inf
     min_deviation = Inf
     max_trajectory = nothing
@@ -79,9 +79,23 @@ function bounded_run_box(z_0::AbstractVector{<:Real}, Φ::AbstractMatrix{<:Real}
     return[min_trajectory, max_trajectory]
 end
 
-function bounded_run_iter(z_0::AbstractVector{<:Real}, Φ::AbstractMatrix{<:Real}, nominal::Array{<:AbstractVector{<:Real}, 2}, step_size::Integer, total_step::Integer)
-    
-
+function bounded_run_iter(z_0::AbstractVector{<:Real}, Φ::AbstractMatrix{<:Real}, nominal::Array{<:AbstractVector{<:Real}, 2}, z_dimention::Integer, step_size::Integer, total_step::Integer)
+    if total_step = 0
+        return bounded_run_box(z_0, Φ, nominal[:, 1:step_size], z_dimention, step_size)
+    else
+        prev_run = bounded_run_iter(z_0, Φ, nominal, z_dimention, step_size, total_step-1)
+        nominal_iter = nominal[:, (total_step*step_size+1):((total_step+1)*step_size)]
+        for trajectory in prev_run:
+            z = trajectory[end]
+            new_trajectories = bounded_run_box(z, Φ, nominal_iter, z_dimention, step_size)
+            for new_trajectory in new_trajectories:
+                result = vcat(trajectory, new_trajectory)
+                push!(prev_run, result)
+            end
+            deleteat!(prev_run, trajectory)
+        end
+        return prev_run
+    end
 end
 
 function find_deviation(trajectory::Array{<:AbstractVector{<:Real}, 2}, nominal::Array{<:AbstractVector{<:Real}, 2})
