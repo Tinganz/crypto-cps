@@ -42,7 +42,7 @@ function bounded_runs(z_0::AbstractVector{<:Real}, Φ::AbstractVector{<:Real}, s
         z[:,1] = z_0
         return [z]
     else
-        prev_values = bounded_runs(stepsize - 1, z_0, a, b)
+        prev_values = bounded_runs(z_0, Φ, step_size-1)
         for element in prev_values:
             flipped = element
             element[:, step_size] = Φ * element[:, step_size-1]
