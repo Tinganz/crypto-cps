@@ -27,14 +27,14 @@ function deviation(sysd::StateSpace{<:Discrete}, z_0::AbstractVector{<:Real}, K:
     # lsim(sysd)
     A, B, C, D = ssdata(sysd)
     p, r = size(B) #Dimensions of B - p = # of state variables, r = # of control inputs
-    z_nominal = find_nominal(z_0, A)
+    z_nominal = find_nominal(z_0, p+r, A)
     
     
     
 end
 
-function find_nominal(z_0::AbstractVector{<:Real}, Φ::AbstractMatrix{<:Real}; H::Integer=100)
-    z = zeros(p + r, H+1)
+function find_nominal(z_0::AbstractVector{<:Real}, Φ::AbstractMatrix{<:Real}, z_dimention::Integer; H::Integer=100)
+    z = zeros(z_dimention, H+1)
     z[:,1] = z_0
     for i in 2:H+1
         z[:,i] = Φ * z[:,i-1]
@@ -42,13 +42,13 @@ function find_nominal(z_0::AbstractVector{<:Real}, Φ::AbstractMatrix{<:Real}; H
     return z
 end
 
-function bounded_runs(z_0::AbstractVector{<:Real}, Φ::AbstractMatrix{<:Real}, step_size::Integer)
+function bounded_runs(z_0::AbstractVector{<:Real}, Φ::AbstractMatrix{<:Real}, z_dimention::Integer, step_size::Integer)
     if step_size == 0
-        z = zeros(p + r, step_size+1)
+        z = zeros(z_dimention, step_size+1)
         z[:,1] = z_0
         return [z]
     else
-        prev_values = bounded_runs(z_0, Φ, step_size-1)
+        prev_values = bounded_runs(z_0, Φ, z_dimention, step_size-1)
         for element in prev_values:
             flipped = element
             element[:, step_size] = Φ * element[:, step_size-1]
