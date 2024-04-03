@@ -55,9 +55,26 @@ end
 
 function bounded_run_box(z_0::AbstractVector{<:Real}, Φ::AbstractVector{<:Real}, nominal::Array{<:AbstractVector{<:Real}, 2}, step_size::Integer)
     trajectories = bounded_runs(z_0, Φ,  step_size)
-    for trajectory in trajectories:
-        
+    max_deviation = -Inf
+    min_deviation = Inf
+    max_trajectory = nothing
+    min_trajectory = nothing
+    for trajectory in trajectories
+        deviation_value = find_deviation(trajectory, nominal)
+        if deviation_value > max_deviation
+            max_deviation = deviation_value
+            max_trajectory = trajectory
+        end
+        if deviation_value < min_deviation
+            min_deviation = deviation_value
+            min_trajectory = trajectory
+        end
     end
+    return[min_trajectory, max_trajectory]
+end
+
+function find_deviation(trajectory::Array{<:AbstractVector{<:Real}, 2}, nominal::Array{<:AbstractVector{<:Real}, 2})
+
 end
 
 end
