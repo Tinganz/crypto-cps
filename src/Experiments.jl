@@ -52,7 +52,7 @@ function bounded_runs(z_0::AbstractVector{<:Real}, Φ::AbstractMatrix{<:Real}, s
         for element in prev_values:
             flipped = element
             element[:, step_size] = Φ * element[:, step_size-1]
-            flipped[:, step_size] = Φ * flipz(element[:, step_size-1])
+            flipped[:, step_size] = Φ * flip_z(element[:, step_size-1])
             push!(prev_values, flipped)
         return prev_values
     end
