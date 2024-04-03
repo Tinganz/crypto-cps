@@ -6,7 +6,7 @@ using ControlSystemsBase
 export deviation
 
 function flip_bit(input::Float32, n::Int)
-    bits = reinterpret(UTint32, u)
+    bits = reinterpret(UInt32, input)
     flipped = xor(bits, 1 << (n-1))
     reinterpret(Float32, flipped)
 end
