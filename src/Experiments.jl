@@ -2,6 +2,7 @@
 module Experiments
 
 using ControlSystemsBase
+using Distances
 
 export deviation
 
@@ -79,10 +80,12 @@ function bounded_run_box(z_0::AbstractVector{<:Real}, Φ::AbstractMatrix{<:Real}
     return[min_trajectory, max_trajectory]
 end
 
-function find_deviation(trajectory::Array{<:AbstractVector{<:Real}, 2}, nominal::Array{<:AbstractVector{<:Real}, 2})
+function find_deviation(trajectory::Array{<:AbstractVector{<:Real}, 2}, nominal::Array{<:AbstractVector{<:Real}, 2}, C::AbstractMatrix{<:Real})
     max_deviation = -Inf
     for time_step in 1:size(trajectory, 2):
-        euclidean_norm = norm(trajectory[:, time_step] - nominal[:, time_step])
+        y_nominal = C * nominal[:, time_step]
+        y = C * trajectory[:, time_step] 
+        euclidean_norm = euclidean(y_nominal, y)
         max_deviation = max(max_deviation, euclidean_norm)
     end
 
